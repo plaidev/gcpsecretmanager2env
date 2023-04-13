@@ -19,7 +19,7 @@ gcpsecretmanager2env -output ./.output.env ./.env
 ./.output.env
 
 ```
-AN_ENV_FROM_SECRET_MANAGER=<VALUE_FROM_SECRET_MANAGEr>
+AN_ENV_FROM_SECRET_MANAGER='<VALUE_FROM_SECRET_MANAGEr>'
 ```
 
 ## Usage
@@ -33,4 +33,6 @@ Note: <input-file> is a required positional argument.
         show help
   -output string
         output file
+  -remove-whitespace
+        remove whitespaces {\n,\t}
 ```

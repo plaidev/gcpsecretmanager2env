@@ -49,13 +49,20 @@ func main() {
 		if err != nil {
 			log.Fatalf("failed to decode secret (%s): %v", value, err)
 		}
-		envs[key] = string(env)
+		escaped := string(env)
+		if flags.removeWhitespace {
+			escaped = strings.ReplaceAll(escaped, "'", "'\"'\"'")
+			escaped = strings.ReplaceAll(escaped, "\n", "\\n")
+			escaped = strings.ReplaceAll(escaped, "\t", "\\t")
+		}
+		envs[key] = escaped
 	}
 
 	output := bytes.NewBuffer(nil)
 	for key, value := range envs {
-		output.WriteString(fmt.Sprintf("%s=%s\n", key, value))
+		output.WriteString(fmt.Sprintf("%s='%s'\n", key, value))
 	}
+	outputBytes := output.Bytes()
 
 	file := os.Stdout
 	if flags.output != "" {
@@ -65,17 +72,24 @@ func main() {
 		}
 	}
 	writer := bufio.NewWriter(file)
-	_, err = writer.Write(output.Bytes())
+	_, err = writer.Write(outputBytes)
 	if err != nil {
 		log.Fatalf("failed to write output: %v", err)
 	}
 	writer.Flush()
+
+	envs, err = envparse.Parse(bytes.NewReader(outputBytes))
+	if err != nil {
+		log.Fatalf("failed to parse output: %v", err)
+	}
+	fmt.Printf("TEST: %s", strings.ReplaceAll(envs["TEST"], "\n", "NN"))
 }
 
 type flags struct {
-	output     string
-	input      string
-	credential string
+	output           string
+	input            string
+	credential       string
+	removeWhitespace bool
 }
 
 func parseFlags() flags {
@@ -83,6 +97,7 @@ func parseFlags() flags {
 	output := flag.String("output", "", "output file")
 	help := flag.Bool("help", false, "show help")
 	credential := flag.String("credential", defaultCredential, "gcp credential file")
+	removeWhitespace := flag.Bool("remove-whitespace", false, "remove whitespaces {\\n,\\t}")
 
 	flag.Parse()
 	flag.Usage = func() {
@@ -98,8 +113,9 @@ func parseFlags() flags {
 
 	inputFilename := flag.Args()[0]
 	return flags{
-		output:     *output,
-		input:      inputFilename,
-		credential: *credential,
+		output:           *output,
+		input:            inputFilename,
+		credential:       *credential,
+		removeWhitespace: *removeWhitespace,
 	}
 }
