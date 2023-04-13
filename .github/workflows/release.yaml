@@ -6,6 +6,7 @@ on:
 permissions:
   packages: write
   deployments: write
+  contents: write
 
 jobs:
   releases-matrix:
