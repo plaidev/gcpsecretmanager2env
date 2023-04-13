@@ -46,8 +46,11 @@ func main() {
 		}
 
 		escaped := string(access.Payload.Data)
+		escaped = strings.ReplaceAll(escaped, "'", "'\"'\"'")
 		if flags.removeWhitespace {
-			escaped = strings.ReplaceAll(escaped, "'", "'\"'\"'")
+			escaped = strings.ReplaceAll(escaped, "\n", "")
+			escaped = strings.ReplaceAll(escaped, "\t", "")
+		} else {
 			escaped = strings.ReplaceAll(escaped, "\n", "\\n")
 			escaped = strings.ReplaceAll(escaped, "\t", "\\t")
 		}
