@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"context"
-	"encoding/base64"
 	"flag"
 	"fmt"
 	"log"
@@ -45,11 +44,8 @@ func main() {
 		if err != nil {
 			log.Fatalf("failed to get secret (%s): %v", value, err)
 		}
-		env, err := base64.RawStdEncoding.DecodeString(string(access.Payload.Data))
-		if err != nil {
-			log.Fatalf("failed to decode secret (%s): %v", value, err)
-		}
-		escaped := string(env)
+
+		escaped := string(access.Payload.Data)
 		if flags.removeWhitespace {
 			escaped = strings.ReplaceAll(escaped, "'", "'\"'\"'")
 			escaped = strings.ReplaceAll(escaped, "\n", "\\n")
@@ -77,12 +73,6 @@ func main() {
 		log.Fatalf("failed to write output: %v", err)
 	}
 	writer.Flush()
-
-	envs, err = envparse.Parse(bytes.NewReader(outputBytes))
-	if err != nil {
-		log.Fatalf("failed to parse output: %v", err)
-	}
-	fmt.Printf("TEST: %s", strings.ReplaceAll(envs["TEST"], "\n", "NN"))
 }
 
 type flags struct {
