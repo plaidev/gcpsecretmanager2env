@@ -36,7 +36,7 @@ func main() {
 	defer client.Close()
 
 	for key, value := range envs {
-		if !strings.HasPrefix(value, "/") {
+		if !strings.HasPrefix(value, "projects/") {
 			continue
 		}
 		access, err := client.AccessSecretVersion(ctx, &secretmanagerpb.AccessSecretVersionRequest{
