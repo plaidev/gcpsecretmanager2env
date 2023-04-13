@@ -31,7 +31,7 @@ func main() {
 	ctx := context.Background()
 	client, err := secretmanager.NewClient(ctx, option.WithCredentialsFile(flags.credential))
 	if err != nil {
-		log.Fatalf("failed to setup client: %v", err)
+		log.Fatalf("failed to setup client (-credential may be required): %v", err)
 	}
 	defer client.Close()
 
@@ -80,7 +80,7 @@ type flags struct {
 
 func parseFlags() flags {
 	defaultCredential := os.Getenv("GOOGLE_APPLICATION_CREDENTIALS")
-	output := flag.String("output", "", "output file (default: stdout)")
+	output := flag.String("output", "", "output file")
 	help := flag.Bool("help", false, "show help")
 	credential := flag.String("credential", defaultCredential, "gcp credential file")
 

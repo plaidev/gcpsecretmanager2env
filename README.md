@@ -28,7 +28,7 @@ AN_ENV_FROM_SECRET_MANAGER=<VALUE_FROM_SECRET_MANAGEr>
 Usage: gcpsecretmanager2env [OPTIONS] <input-file>
 Note: <input-file> is a required positional argument.
   -credential string
-        gcp credential file (default "~/.config/gcloud/application_default_credentials.json")
+        gcp credential file. it will see GOOGLE_APPLICATION_CREDENTIALS when it's not set
   -help
         show help
   -output string
