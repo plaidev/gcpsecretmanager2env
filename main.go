@@ -79,9 +79,10 @@ type flags struct {
 }
 
 func parseFlags() flags {
-	output := flag.String("output", "", "output file")
+	defaultCredential := os.Getenv("GOOGLE_APPLICATION_CREDENTIALS")
+	output := flag.String("output", "", "output file (default: stdout)")
 	help := flag.Bool("help", false, "show help")
-	credential := flag.String("credential", "~/.config/gcloud/application_default_credentials.json", "gcp credential file")
+	credential := flag.String("credential", defaultCredential, "gcp credential file")
 
 	flag.Parse()
 	flag.Usage = func() {
